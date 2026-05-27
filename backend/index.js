@@ -3,9 +3,10 @@ import dotenv from 'dotenv';
 import conectarDB from './config/db.js';
 import veterinarioRoutes from './routes/veterinarioRoutes.js';
 
+dotenv.config();
+
 const app = express();
 app.use(express.json());
-dotenv.config();
 
 conectarDB();
 
