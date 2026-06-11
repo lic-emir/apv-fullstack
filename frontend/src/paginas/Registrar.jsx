@@ -1,28 +1,39 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Alerta from "../components/Alerta";
+import axios from 'axios';
 
 const Registrar = () => {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
-  const [passsword, setPassword] = useState('');
+  const [password, setPassword] = useState('');
   const [repeatPasssword, setRepeatPassword] = useState('');
   const [alerta, setAlerta] = useState({});
-  const handleSubmit = e => {
+
+  const handleSubmit = async e => {
     e.preventDefault();
-    if ([nombre, email, passsword, repeatPasssword].includes('')) {
+    if ([nombre, email, password, repeatPasssword].includes('')) {
       setAlerta({msg:'Hay campos vacias', error:true});
       return;
     }
-    if (passsword !== repeatPasssword) {
+    if (password !== repeatPasssword) {
       setAlerta({msg:'Los password no son iguales', error:true});
       return;
     }
-    if (passsword < 6) {
+    if (password < 6) {
       setAlerta({msg:'Password corto, minimo 6 caracteres', error:true});
       return;
     }
     setAlerta({});
+
+    //crear el usuario en el backend
+    try {
+      const url = "http://localhost:4000/api/veterinarios";
+      await axios.post(url, {nombre, email, password});
+      setAlerta({msg: 'Creado correctamente, revisa tu email', error: false})
+    } catch (error) {
+      setAlerta({msg: error.response.data.msg, error: true});
+    }
   }
   const {msg} = alerta;
 
@@ -44,7 +55,7 @@ const Registrar = () => {
           </div>
           <div className="my-5">
             <label htmlFor="password" className="uppercase text-gray-600 block text-xl font-bold">Password</label>
-            <input type="password" placeholder="Tu password" id="password" value={passsword} onChange={e => setPassword(e.target.value)} className="border w-full p-3 mt-3 bg-gray-50 rounded-xl"/>
+            <input type="password" placeholder="Tu password" id="password" value={password} onChange={e => setPassword(e.target.value)} className="border w-full p-3 mt-3 bg-gray-50 rounded-xl"/>
           </div>
           <div className="my-5">
             <label htmlFor="repeat-password" className="uppercase text-gray-600 block text-xl font-bold">Repetir Password</label>
