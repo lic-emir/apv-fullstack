@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Alerta from './Alerta';
 import usePacientes from "../hooks/usePacientes";
 
@@ -8,8 +8,20 @@ const Formulario = () => {
   const [email, setEmail] = useState('');
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
   const [sintomas, setSintomas] = useState('');
+  const [id, setId] = useState(null);
   const [alerta, setAlerta] = useState({});
-  const {guardarPaciente} = usePacientes();
+  const {guardarPaciente, paciente} = usePacientes();
+
+  useEffect(() => {
+    if (paciente?.nombre) {
+      setNombre(paciente.nombre);
+      setPropietario(paciente.propietario);
+      setEmail(paciente.email);
+      setFecha(new Date(paciente.fecha).toLocaleDateString('en-CA'));
+      setSintomas(paciente.sintomas);
+      setId(paciente._id);
+    }
+  }, [paciente]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -19,8 +31,16 @@ const Formulario = () => {
         error: true
       });
     }
-    setAlerta({});
-    guardarPaciente({nombre, propietario, email, fecha, sintomas});
+    guardarPaciente({nombre, propietario, email, fecha, sintomas, id});
+    setAlerta({
+      msg: 'Guardado correctamente'
+    });
+    setNombre('');
+    setPropietario('');
+    setEmail('');
+    setFecha('');
+    setSintomas('');
+    setId('');
   }
   const {msg} = alerta;
   return (
@@ -51,7 +71,7 @@ const Formulario = () => {
           <label htmlFor="sintomas" className="text-gray-700 uppercase font-bold">Síntomas</label>
           <textarea id="sintomas" placeholder="Describe los síntomas" className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md" value={sintomas} onChange={e => setSintomas(e.target.value)}/>
         </div>
-        <input type="submit" className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors" value="Agregar Paciente"/>
+        <input type="submit" className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors" value={id ? 'Guardar cambio' : 'Agregar paciente'}/>
       </form>
       {msg && <Alerta alerta={alerta}/>}
     </>
