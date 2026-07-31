@@ -8,7 +8,7 @@ Aplicación MERN para registrar datos de pacientes (las mascotas y sus dueños) 
 
 [Ver Demostración](https://system-veterinarios-mern.netlify.app/)
 
-![Preview](./apv-fullstack.png)
+![Preview](./frontend/public/apv-fullstack.png)
 
 ## Features
 
